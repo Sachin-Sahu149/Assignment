@@ -55,7 +55,7 @@ export const register = async (req, res) => {
             return res.status(400).json({ error: "This email already exist" });
         }
         if (isContactExist) {
-            return res.status(400).json({ error: "This email already exist" });
+            return res.status(400).json({ error: "This contact number is already exist" });
         }
 
         const newUser = new User({
@@ -132,7 +132,7 @@ export const login = async (req, res) => {
     } catch (error) {
         console.log("Error in login controllers :", error);
         return res.status(500).json({ error: "Internal server error" });
-    }
+    } 
 }
 
 export const logout = async (req, res) => {
