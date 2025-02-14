@@ -1,0 +1,48 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+@layer utilities {
+
+  /* Hide scrollbar by default */
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 8px !important;
+    /* Thin scrollbar */
+    height: 8px !important;
+    /* For horizontal scrolling */
+  }
+
+  /* Scrollbar track (background) */
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+    /* Invisible track */
+  }
+
+  /* Scrollbar handle (thumb) */
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.2);
+    /* Light grayish scrollbar */
+    border-radius: 10px;
+  }
+
+  /* Show scrollbar on hover */
+  .custom-scrollbar:hover::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.4);
+    /* Darker on hover */
+  }
+
+  /* Firebox  */
+  /* Firefox scrollbar support */
+  /* .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: #888 #f1f1f1;
+  } */
+
+}
+
+
+
+body {
+  font-family: 'Roboto', sans-serif
+}
