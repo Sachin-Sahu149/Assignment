@@ -97,7 +97,7 @@ export const login = async (req, res) => {
         const { email, password } = req.body;
 
         console.log(`email : ${email} , password:${password}, ${req.body}`);
-        // console.dir(req);
+        console.dir(req.body);
 
         if (!email || !password) return res.status(400).json({ error: "Something missing" });
 
