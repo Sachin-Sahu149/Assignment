@@ -19,13 +19,13 @@ function setCookies(res, accessToken, refreshToken) {
     res.cookie("accessToken", accessToken, {
         maxAge: 1 * 60 * 1000,
         httpOnly: true,
-        sameSite: true,
+        sameSite: false,
         secure: process.env.NODE_ENV === "production"
     })
     res.cookie("refreshToken", refreshToken, {
         maxAge: 7 * 24 * 60 * 60 * 1000,
         httpOnly: true,
-        sameSite: true,
+        sameSite: false,
         secure: process.env.NODE_ENV === "production"
     })
 }
