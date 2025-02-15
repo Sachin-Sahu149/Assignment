@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { useStore } from "zustand";
+import { useDataStore } from "../dataStore/useStore";
 
 export function Registration() {
   const [formData, setFormData] = useState({
-    fullName: "",
+    username: "",
     email: "",
     password: "",
     tenthPercentage: "",
@@ -15,6 +17,9 @@ export function Registration() {
     gender: "",
   });
 
+  const{register,checkAuth} = useDataStore();
+  let navigate = useNavigate();
+
   // Handle input changes
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -23,10 +28,16 @@ export function Registration() {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
-    console.log("Submitted Data:", formData);
-    alert("Form submitted successfully!");
+    console.log("Submitted Data:", Date.now());
+    const isRegistered = await register({formData});
+
+    if(isRegistered){
+      navigate('/')
+    }
+
+    // alert("Form submitted successfully!");
   };
 
   return (
@@ -41,9 +52,9 @@ export function Registration() {
             <label className="block text-gray-700 mb-1">Full Name</label>
             <input
               type="text"
-              name="fullName"
+              name="username"
               placeholder="Enter full name"
-              value={formData.fullName}
+              value={formData.username}
               onChange={handleChange}
               className="w-full p-3 border rounded-md focus:ring-2 focus:ring-sky-400 focus:outline-none"
               required

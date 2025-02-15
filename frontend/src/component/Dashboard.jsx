@@ -32,12 +32,9 @@ export function Dashboard() {
   return (
     <div className="min-h-full w-full bg-gray-100 p-4 overflow-y-auto flex flex-col">
       {/* Top Section */}
-      <div className=" min-h-64 grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4 ">
-        <div className="bg-green-200 p-4 min-h-36 rounded-xl shadow-md flex flex-col items-center justify-center">
+      <div className=" min-h-52  grid grid-cols-1 lg:grid-cols-4 gap-4 mb-4 ">
+        <div className="bg-green-200 p-4  min-h-36 rounded-xl shadow-md flex flex-col items-center justify-center">
           <p className="text-lg font-semibold">Attendance</p>
-          {/* <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-md">
-            <span className="text-xl font-bold">85%</span>
-          </div> */}
 
         </div>
 
@@ -75,7 +72,7 @@ export function Dashboard() {
           <div className="max-h-[28rem] overflow-y-auto px-2 py-5 custom-scrollbar">
             <ul className="mt-2 space-y-2">
               {b.map((data, index) => (
-                <CourseAttendence name={data.name} presence={data.presence} />
+                <CourseAttendence key={index} name={data.name} presence={data.presence} />
               ))}
 
             </ul>
