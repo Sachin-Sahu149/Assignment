@@ -12,7 +12,7 @@ export const protectRoute = async (req, res, next) => {
         }
         // accessToken expired
         const decode = jwt.verify(accessToken, process.env.ACCESS_TOKEN);
-
+        console.log("decode when token expired :",decode);
         if (!decode) {
             return res.status(400).json({ error: "Unauthorized : token expired" });
         }

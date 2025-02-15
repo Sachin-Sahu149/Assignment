@@ -17,7 +17,7 @@ function generateToken(userID) {
 
 function setCookies(res, accessToken, refreshToken) {
     res.cookie("accessToken", accessToken, {
-        maxAge: 15 * 60 * 1000,
+        maxAge: 1 * 60 * 1000,
         httpOnly: true,
         sameSite: true,
         secure: process.env.NODE_ENV === "production"
@@ -39,6 +39,7 @@ export const register = async (req, res) => {
 
         const { username, password, email,tenthPercentage,twelfthPercentage,program,branch ,age,contact,gender} = req.body;
 
+        console.log("req.body ->",req.body);
         const { error } = userValidationSchema.validate(req.body, { abortEarly: false });
 
         if (error) {
@@ -80,10 +81,7 @@ export const register = async (req, res) => {
 
         setRefreshTokenOnRedis(newUser._id, refreshToken);
 
-        return res.status(200).json({
-            username: newUser.username,
-            email: newUser.email,
-        })
+        return res.status(200).json(newUser)
 
     } catch (error) {
         console.log("Error in signup controllers :", error);
@@ -97,7 +95,7 @@ export const login = async (req, res) => {
         const { email, password } = req.body;
 
         console.log(`email : ${email} , password:${password}, ${req.body}`);
-        // console.dir(req);
+        console.dir(req.body);
 
         if (!email || !password) return res.status(400).json({ error: "Something missing" });
 
@@ -119,15 +117,13 @@ export const login = async (req, res) => {
         }
 
         const { accessToken, refreshToken } = generateToken(user._id);
+        console.log("Token :",accessToken,refreshToken);
 
         setCookies(res, accessToken, refreshToken);
 
         setRefreshTokenOnRedis(user._id, refreshToken);
 
-        return res.status(200).json({
-            username: user.username,
-            email: user.email,
-        })
+        return res.status(200).json(user)
 
     } catch (error) {
         console.log("Error in login controllers :", error);
@@ -162,6 +158,7 @@ export const refreshToken = async (req, res) => {
     try {
 
         const refreshToken = req.cookies.refreshToken;
+        console.log("Refresh token *** * ",refreshToken);
 
         if (!refreshToken) {
             return res.status(400).json({ error: "No refresh token provided" });
@@ -177,12 +174,12 @@ export const refreshToken = async (req, res) => {
             { userID: decode.userID },
             process.env.ACCESS_TOKEN,
             {
-                expiresIn: "15m" // expiresIn should be inside the same object as the algorithm
+                expiresIn: "1m" // expiresIn should be inside the same object as the algorithm
             }
         );
 
         res.cookie('accessToken', token, {
-            maxAge: 15 * 60 * 1000,
+            maxAge: 1 * 60 * 1000,
             sameSite: true,
             httpOnly: true,
             secure: process.env.NODE_ENV === "production"
