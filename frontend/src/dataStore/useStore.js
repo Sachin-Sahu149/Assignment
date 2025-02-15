@@ -18,7 +18,7 @@ export const useDataStore = create((set) => ({
 
             console.log("users profile :", res.data);
 
-            set({profileData: res.data });
+            set({ profileData: res.data });
 
         } catch (error) {
             // set({ loading: false });
@@ -37,7 +37,7 @@ export const useDataStore = create((set) => ({
 
             console.log("Response in registering :", res.data);
 
-            set({profileData: res.data });
+            set({ profileData: res.data });
 
             toast.success("Registered successfully");
             return true;
@@ -59,7 +59,7 @@ export const useDataStore = create((set) => ({
             console.log("Login successful:", res.data);
 
 
-            set({profileData: res.data });
+            set({ profileData: res.data });
             toast.success("Logged in successfully");
             return true;
 
@@ -99,39 +99,84 @@ export const useDataStore = create((set) => ({
 
 }))
 
+// let refreshPromise = null;
+
+// axios.interceptors.response.use(
+//     (response) => {
+//         console.log("interceptor :: ");
+//         return response;
+//     },
+//     async (error) => {
+//         console.log("Axios Interceptor Error:", error);
+
+//         let originalRequest = error.config;
+
+//         if (error.response?.status === 401 && !originalRequest._retry) {
+
+//             originalRequest._retry = true;
+//             console.log("originalRequest :: ", originalRequest)
+//             try {
+//                 // if (!refreshPromise) {
+//                 //     refreshPromise = await useDataStore.getState().refreshToken();
+//                 // }
+
+//                 // await refreshPromise;
+//                 // refreshPromise = null;
+
+//                 // // Retry the original request (cookies should now include new token)
+//                 // return axios(originalRequest);
+
+//                 if (refreshPromise) {
+//                     await refreshPromise;
+//                     return axios(originalRequest);
+//                 }
+
+//                 // Start a new refresh process
+//                 refreshPromise = useDataStore.getState().refreshToken();
+//                 await refreshPromise;
+//                 refreshPromise = null;
+
+//                 return axios(originalRequest);
+
+//             } catch (refreshError) {
+//                 console.log("Refresh Token Error:", refreshError);
+//                 useDataStore.getState().logout();
+//                 return Promise.reject(refreshError);
+//             }
+//         }
+
+//         return Promise.reject(error);
+//     }
+// );
+
 let refreshPromise = null;
 
 axios.interceptors.response.use(
-    (response)=>{
-        console.log("interceptor :: ");
-        return response;
-    },
+    (response) => response,
     async (error) => {
-        console.log("Axios Interceptor Error:", error);
-
         let originalRequest = error.config;
 
         if (error.response?.status === 401 && !originalRequest._retry) {
             originalRequest._retry = true;
 
-            try {
-                if (!refreshPromise) {
-                    refreshPromise = useDataStore.getState().refreshToken();
-                }
-
-                await refreshPromise;
-                refreshPromise = null;
-
-                // Retry the original request (cookies should now include new token)
-                return axios(originalRequest);
-
-            } catch (refreshError) {
-                console.log("Refresh Token Error:", refreshError);
-                // useDataStore.getState().logout();
-                return Promise.reject(refreshError);
+            if (!refreshPromise) {
+                refreshPromise = useDataStore.getState().refreshToken()
+                    .catch((refreshError) => {
+                        console.log("Token Refresh Failed:", refreshError);
+                        useDataStore.getState().logout();
+                        throw refreshError;
+                    })
+                    .finally(() => {
+                        refreshPromise = null;
+                    });
             }
+
+            await refreshPromise;
+
+            // Retry the original request (it should now send the updated cookie)
+            return axios(originalRequest);
         }
 
         return Promise.reject(error);
     }
-); 
+);
